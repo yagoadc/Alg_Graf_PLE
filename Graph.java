@@ -5,18 +5,20 @@ import java.util.Set;
 import java.util.ArrayList;
 
 public class Graph {
-    private HashMap<Integer,Vertex> vertex_set;
+    protected HashMap<Integer,Vertex> vertex_set;
 
     public Graph() {
         vertex_set = new HashMap<Integer,Vertex>();
     }
     
-    public void add_vertex( int id) {
+    public boolean add_vertex( int id) {
         if ( this.vertex_set.get(id) == null) {
             Vertex v = new Vertex( id );
             vertex_set.put( v.id, v );
+            return true;
         } else{
             System.out.println("Já existe vértice com esse número");
+            return false;
         }
     
     }
@@ -40,35 +42,47 @@ public class Graph {
 
     public void del_vertex ( int id ) {
         if ( vertex_set.containsKey(id)) {
-            //System.out.println("Tam: "+this.vertex_set.size());
             Vertex v_remove = vertex_set.get(id);
             HashMap<Integer, Vertex> meus_vizinhos = v_remove.nbhood;
             for (Integer key_id : meus_vizinhos.keySet()) {
                 this.vertex_set.get(key_id.intValue()).nbhood.remove(id);
             }
             this.vertex_set.remove(id);
-            //System.out.println("Tam: "+this.vertex_set.size());
         } else {
-            System.out.printf("Não existe vértice com esse número");
+            System.out.printf("Não existe vértice com essa id");
         }
         
     }
-
+    // Assistir gravação aula (03/09), melhorar o for
     public void compact() {
-        int count = 1;
-        for (Vertex v : this.vertex_set.values()) {
-            Vertex v_replace = new Vertex(count);
-            v_replace.nbhood = v.nbhood;
-            if ( v.id != count) { // Antes de mudar o id do vertex, muda o id de apontador de meus vizinhos, para mim. 
-                for ( Vertex v_aux : this.vertex_set.values()){
-                    if(v_aux.nbhood.containsKey(v.id)){
-                        v_aux.nbhood.replace(v.id, v_replace);
-                    }
-                }
-            }
-            this.vertex_set.replace(v.id, v_replace);
-            count++;
-        }
+		int n = vertex_set.size();
+		int [ ] present = new int[n+1];
+		Vertex [ ] stranges = new Vertex[n];
+		for( int i = 1; i <= n; i++) {
+			present[ i ] = 0;
+		}
+		int qst = 0;
+        for( Vertex v1 : vertex_set.values() ) {
+			if( v1.id <= n )
+				present[ v1.id ] = 1;
+			else
+				stranges[ qst++ ] = v1;	
+		}
+		int i = 1;
+		for( int pairs = 0; pairs < qst; i++ ) {
+			if( present[ i ] == 0)		
+				present[ pairs++ ] = i;
+		}
+		for( i = 0; i < qst; i++) {
+			int old_id = stranges[ i ].id;
+			stranges[ i ].id = present[ i ];
+			for( Vertex v1 : vertex_set.values() ) {
+				if( v1.nbhood.get( old_id ) != null ) {
+					v1.nbhood.remove( old_id );
+					v1.nbhood.put( stranges[ i ].id, stranges[ i ] );
+				}
+			}
+		}
     }
 
     public int max_degree() { // Grau do vértice que possui maior número de arestas incidentes a ele.
@@ -110,78 +124,106 @@ public class Graph {
     }
 
     public boolean is_connected() {
-        
-        ArrayList<Integer> comp_encontrada = new ArrayList<>(); 
-        Queue<Integer> v_grafo = new LinkedList<>(); 
-        Set<Integer> v = vertex_set.keySet();
-        
-        for ( Integer id : v) {
-            v_grafo.add(id);
-        }
+        if (!this.is_undirected()) {
+            Graph g_sub = new Graph();
+            g_sub = this.subjacent();
+            Set<Integer> id = g_sub.vertex_set.keySet();
+            for ( Integer v : id ) { // Pesquisar como pegar um id qualquer do set, sem fazer isso 
+                g_sub.BFS(v);
+                break;
+            }
 
-        comp_encontrada = BFS(v_grafo.remove());
-
-        if ( comp_encontrada.size() == v.size()) {
-            return true;
-        }
-        return false;
-    }
-    
-    public ArrayList<Integer> BFS( Integer id_raiz ) {
-        //Vertex raiz = vertex_set.get( id_raiz );
-        ArrayList<Integer> vertices_encontrados = new ArrayList<>(vertex_set.size());
-        Queue<Integer> fila = new LinkedList<>();
-        
-        vertices_encontrados.add(id_raiz);
-        fila.add(id_raiz); 
-
-        //System.out.println("Elementos encontrados "+ vertices_encontrados); 
-        //System.out.println("Elementos da fila "+ fila); 
-
-        while ( !fila.isEmpty() ) {
-
-            //int head = fila.peek(); 
-            //System.out.println("Cabeça da fila-"+ head); 
-            Integer id_v = fila.remove();
-
-            Vertex v = vertex_set.get( id_v );
-            Set<Integer> v_nbhood = v.nbhood.keySet();
-            for ( Integer id : v_nbhood) {
-                if(!vertices_encontrados.contains(id)){
-                    fila.add(id);
-                    vertices_encontrados.add(id);
+            for (  Integer i  : id ) {
+                Vertex v = g_sub.vertex_set.get(i);
+                if ( v.parent == null) {
+                    return false;
                 }
             }
 
-            //System.out.println("Elements encontrados:"+ vertices_encontrados);
-            //System.out.println("Elementos da fila "+ fila);  
-
+            return true;
         }
 
-        return vertices_encontrados;
+        for ( Integer v : this.vertex_set.keySet() ) {
+            this.BFS(v);
+            break;
+        }
 
+        for (  Integer j  : this.vertex_set.keySet() ) {
+            Vertex v = this.vertex_set.get(j);
+            if ( v.parent == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int count_components() { //Não funciona - terminar
+        Queue<Vertex> nao_descobertos = new LinkedList<Vertex>();
+        int componentes = 0;
+        for ( Integer v : this.vertex_set.keySet() ) {
+            this.BFS(v);
+            break;
+        }
+
+        for (  Integer j  : this.vertex_set.keySet() ) {
+            Vertex v = this.vertex_set.get(j);
+            if ( v.parent == null) {
+                nao_descobertos.add(v);
+                System.out.println("Add não descorbeto!");
+                break;
+            }
+        }
+        
+        componentes++;
+
+        while ( !nao_descobertos.isEmpty()) {
+            this.BFS(nao_descobertos.poll().id);
+            for (  Integer j  : this.vertex_set.keySet() ) {
+                Vertex v = this.vertex_set.get(j);
+                if ( v.parent == null) {
+                    nao_descobertos.add(v);
+                    System.out.println("Add não descorbeto!");
+                    break;
+                }
+            }
+            System.out.println("Sai do for!");
+            componentes++;
+        }
+        
+        return componentes;
+        
+	}
+    
+    public void BFS( Integer id_raiz ) {
+
+        Vertex raiz = vertex_set.get( id_raiz );
+        raiz.dist = 0;
+
+        Queue<Vertex> lista = new LinkedList<Vertex>();
+        lista.add( raiz );
+
+        Vertex atual;
+
+        while ((atual = lista.poll()) != null) {
+            for( Vertex viz : atual.nbhood.values() ) {
+                if( viz.dist == null ) {
+                    viz.discover( atual );
+                    lista.add( viz );
+                }
+            }
+        }
     }
 
     public void print() {
-        System.out.printf("Grafo, grau máximo %d  \n", this.max_degree());
+        System.out.printf("\n\n Grafo, grau máximo %d", this.max_degree());
 
         if( this.is_undirected() )
-            System.out.println("\nNão direcionado");
+            System.out.println("\n\nNão direcionado");
         else
-            System.out.println("\nDirecionado");
+            System.out.println("\n\nDirecionado");
 
-        if( this.is_connected() )
-            System.out.println("\nConexo");
-        else
-            System.out.println("\nNão_conexo");
-
-        for ( Vertex v : vertex_set.values()){
+        for( Vertex v : vertex_set.values())
             v.print();
-            System.out.println();
-        }
-        /*for(int i = 1; i <= vertex_set.size(); i++)
-            vertex_set.get(i).print();
-            System.out.println();*/
     }
 }
 
