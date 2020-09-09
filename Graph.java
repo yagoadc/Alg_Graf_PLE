@@ -136,7 +136,7 @@ public class Graph {
 
             for (  Integer i  : id ) {
                 Vertex v = g_sub.vertex_set.get(i);
-                if ( v.parent == null) {
+                if ( v.dist == null) {
                     return false;
                 }
             }
@@ -151,7 +151,7 @@ public class Graph {
 
         for (  Integer j  : this.vertex_set.keySet() ) {
             Vertex v = this.vertex_set.get(j);
-            if ( v.parent == null) {
+            if ( v.dist == null) {
                 return false;
             }
         }
@@ -169,21 +169,21 @@ public class Graph {
 
         for (  Integer j  : this.vertex_set.keySet() ) {
             Vertex v = this.vertex_set.get(j);
-            if ( v.parent == null) {
+            if ( v.dist == null) {
                 nao_descobertos.add(v);
             }
         }
 
         while ( !nao_descobertos.isEmpty()) {
             Vertex aux = nao_descobertos.poll();
-            if ( aux.parent == null ) {
+            if ( aux.dist == null ) {
                 this.BFS(aux.id); 
             }     
         }
 
         for (  Integer j  : this.vertex_set.keySet() ) {
             Vertex v = this.vertex_set.get(j);
-            if ( v.parent == null) {
+            if ( v.dist == 0) {
                 componentes++; 
             }
         }
