@@ -6,12 +6,16 @@ public class Vertex {
     protected HashMap<Integer,Vertex> nbhood;
     protected Vertex parent;
     protected Integer dist;
+    protected Integer d_inicial;
+    protected Integer d_final;
 
     public Vertex ( int id ) {
         this.id = id;
         nbhood = new HashMap<Integer,Vertex>();
         parent = null;
         dist = null;
+        d_inicial = null;
+        d_final = null;
     }
     
     public void add_neighbor( Vertex viz ) {
@@ -66,5 +70,15 @@ public class Vertex {
             System.out.print(", não alcançável pela raiz");
         else
             System.out.print(", raiz, distância" + dist);
+    }
+
+    public void print_dfs() {
+        System.out.print("\nId do vértice " + id + ", Vizinhança: " );
+        for( Vertex v : nbhood.values())
+            System.out.print(" " + v.id );
+        if( parent != null)
+            System.out.print(", pai " + parent.id + " d " + d_inicial + " f " + d_final );
+        else
+            System.out.print(", raiz, d " + d_inicial + " f " + d_final );
     }
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class Graph {
     protected HashMap<Integer,Vertex> vertex_set;
+    protected Integer tempo;
 
     public Graph() {
         vertex_set = new HashMap<Integer,Vertex>();
@@ -212,6 +213,40 @@ public class Graph {
         }
     }
 
+    public void DFS( ) {
+        
+        for ( Vertex v : this.vertex_set.values()) {
+            v.parent = null;
+        }
+        
+        this.tempo = 0;
+
+        for ( Vertex v1 : this.vertex_set.values()) {
+            if ( v1.d_inicial == null) {
+                this.DFS_vist(/*g,*/ v1);
+            }
+        }
+
+    }
+
+    public void DFS_vist( /*Graph g,*/ Vertex v ) {
+
+        tempo = tempo + 1;
+
+        v.d_inicial = tempo;
+
+        for ( Vertex v_linha : v.nbhood.values()){
+            if ( v_linha.d_inicial == null) {
+                v_linha.parent = v;
+                this.DFS_vist(v_linha);
+            }
+        }
+
+        tempo = tempo + 1;
+        v.d_final = tempo;
+
+    }
+    // Melhorar os print do grafo e também vértices
     public void print() {
         System.out.printf("\n\n Grafo, grau máximo %d", this.max_degree());
 
@@ -222,6 +257,18 @@ public class Graph {
 
         for( Vertex v : vertex_set.values())
             v.print();
+    }
+
+    public void print_dfs() {
+        System.out.printf("\n\n Grafo, grau máximo %d", this.max_degree());
+
+        if( this.is_undirected() )
+            System.out.println("\n\nNão direcionado");
+        else
+            System.out.println("\n\nDirecionado");
+
+        for( Vertex v : vertex_set.values())
+            v.print_dfs();
     }
 }
 
