@@ -124,6 +124,7 @@ public class Graph {
     }
 
     public boolean is_connected() {
+        // Modularizar para tirar repitição de código 
         if (!this.is_undirected()) {
             Graph g_sub = new Graph();
             g_sub = this.subjacent();
@@ -143,7 +144,7 @@ public class Graph {
             return true;
         }
 
-        for ( Integer v : this.vertex_set.keySet() ) {
+        for ( Integer v : this.vertex_set.keySet() ) { // Pesquisar como pegar um id qualquer do set, sem fazer isso
             this.BFS(v);
             break;
         }
@@ -157,10 +158,11 @@ public class Graph {
         return true;
     }
 
-    public int count_components() { //Não funciona - terminar
+    public int count_components() {
         Queue<Vertex> nao_descobertos = new LinkedList<Vertex>();
         int componentes = 0;
-        for ( Integer v : this.vertex_set.keySet() ) {
+        
+        for ( Integer v : this.vertex_set.keySet() ) { // Pesquisar como pegar um id qualquer do set, sem fazer isso 
             this.BFS(v);
             break;
         }
@@ -169,25 +171,21 @@ public class Graph {
             Vertex v = this.vertex_set.get(j);
             if ( v.parent == null) {
                 nao_descobertos.add(v);
-                System.out.println("Add não descorbeto!");
-                break;
             }
         }
-        
-        componentes++;
 
         while ( !nao_descobertos.isEmpty()) {
-            this.BFS(nao_descobertos.poll().id);
-            for (  Integer j  : this.vertex_set.keySet() ) {
-                Vertex v = this.vertex_set.get(j);
-                if ( v.parent == null) {
-                    nao_descobertos.add(v);
-                    System.out.println("Add não descorbeto!");
-                    break;
-                }
+            Vertex aux = nao_descobertos.poll();
+            if ( aux.parent == null ) {
+                this.BFS(aux.id); 
+            }     
+        }
+
+        for (  Integer j  : this.vertex_set.keySet() ) {
+            Vertex v = this.vertex_set.get(j);
+            if ( v.parent == null) {
+                componentes++; 
             }
-            System.out.println("Sai do for!");
-            componentes++;
         }
         
         return componentes;
