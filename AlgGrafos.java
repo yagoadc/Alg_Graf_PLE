@@ -10,7 +10,7 @@ public class AlgGrafos {
         Scanner scan1 = new Scanner(System.in);
         
         String line1 = "\n\n 0 Sair \n 1 Print \n 2 Ler de arquivo \n 3 Escrever em arquivo \n 4 Adicionar vértice";
-        String line2 = "\n 5 Adicionar aresta \n 6 Excluir vértice \n 7 BFS \n 8 Subjacente \n 9 Compactar \n 10 É conexo ? \n 11 Conta_componentes \n 12 DFS \n Escolha a opção: ";
+        String line2 = "\n 5 Adicionar aresta \n 6 Excluir vértice \n 7 BFS \n 8 Subjacente \n 9 Compactar \n 10 É conexo ? \n 11 Conta_componentes \n 12 DFS \n 13 Possui ciclos? \n Escolha a opção: ";
         String menu = line1 + line2;
         
         Graph g1 = new Graph();
@@ -113,6 +113,14 @@ public class AlgGrafos {
                 case 12:
                     g1.DFS();
                     g1.print_dfs();
+                    break;
+                case 13:
+                    if(g1.eh_aciclico()){
+                        System.out.println("\n\nGrafo é aciclico.");
+                    } else {
+                        System.out.println("\n\nGrafo é ciclico.");
+                    }
+
             }
         }
         
