@@ -1,12 +1,15 @@
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Graph {
     protected HashMap<Integer,Vertex> vertex_set;
     protected Integer tempo;
+    private Boolean acyclic;
 
     public Graph() {
         vertex_set = new HashMap<Integer,Vertex>();
@@ -214,31 +217,31 @@ public class Graph {
     }
 
     public void DFS( ) {
-        
-        for ( final Vertex v : this.vertex_set.values()) {
+        acyclic = true;
+        for ( Vertex v : this.vertex_set.values()) {
             v.parent = null;
         }
         
         this.tempo = 0;
 
-        for ( final Vertex v1 : this.vertex_set.values()) {
+        for ( Vertex v1 : this.vertex_set.values()) {
             if ( v1.d_inicial == null) {
                 this.DFS_vist(v1);
             }
         }
-
     }
 
-    public void DFS_vist( final Vertex v ) {
-
+    public void DFS_vist( Vertex v ) {
         tempo = tempo + 1;
-
         v.d_inicial = tempo;
-
+        // v_linha são os vertices vizinhos de v
         for ( final Vertex v_linha : v.nbhood.values()){
             if ( v_linha.d_inicial == null) {
                 v_linha.parent = v;
                 this.DFS_vist(v_linha);
+            } else if (v_linha.d_inicial < v.d_inicial) {
+                acyclic = false;
+                // encontrar os vértices que formam esse ciclo
             }
         }
 
@@ -249,30 +252,43 @@ public class Graph {
 
     public boolean eh_aciclico () {
         
-        this.DFS();
-
-        for ( final Vertex v : this.vertex_set.values() ) {
-            for ( final Vertex v_linha : v.nbhood.values()){
-                 if (v_linha.d_final > v.d_final ) {
-                     return false;
-                 }
-            }
-        }
-
-        return true;
+        if( acyclic != null )
+            return acyclic;
+        DFS( );
+        return acyclic;
     }
 
-    // Melhorar os print do grafo e também vértices
+    public void topological_sorting( ) {
+		if( ! eh_aciclico( ) ) {
+			System.out.printf("\n\n O grafo contém ciclo!!");
+			return;
+		}
+		List<Vertex> ts_vertex_set = new ArrayList<Vertex>();
+		for ( Vertex v1 : vertex_set.values( ) )
+            ts_vertex_set.add( v1 );
+		Collections.sort(ts_vertex_set);
+		System.out.printf("\n\n Ordenação topológica \n");
+		for ( Vertex v1 : ts_vertex_set )
+			System.out.printf("\n id: " + v1.id + " f: " + v1.d_final );
+	}
+
     public void print() {
+		System.out.print("\n\n -------------------------------");
+        if( this.vertex_set.size() == 0 ) {
+			System.out.printf("\n\n Conjunto de vértices vazio");
+			System.out.print("\n\n -------------------------------");
+			return;
+		}
         System.out.printf("\n\n Grafo, grau máximo %d", this.max_degree());
 
         if( this.is_undirected() )
-            System.out.println("\n\nNão direcionado");
+            System.out.println("\nNão direcionado");
         else
-            System.out.println("\n\nDirecionado");
+            System.out.println("\nDirecionado");
 
-        for( final Vertex v : vertex_set.values())
+        for( Vertex v : vertex_set.values())
             v.print();
+		System.out.print("\n\n -------------------------------");
     }
 
     public void print_dfs() {
