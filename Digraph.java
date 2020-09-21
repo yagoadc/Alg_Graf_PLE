@@ -111,13 +111,13 @@ public class Digraph implements Serializable {
         for( Vertex v1 : vertex_set.values()) {
             for( Vertex v2 : v1.nbhood.values()) {
                 if (v2.nbhood.get(v1.id) == null) {
-                    this.dirigivel = false;
+                    //this.dirigivel = false;
                     return false;
                 }
                     
             }
         }
-        this.dirigivel = true;
+        //this.dirigivel = true;
         return true;
     }
 
