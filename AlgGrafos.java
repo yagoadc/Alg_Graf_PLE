@@ -3,6 +3,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
+import java.util.List;
 
 public class AlgGrafos {
     public static void main(String args[]) {
@@ -10,10 +11,12 @@ public class AlgGrafos {
         Scanner scan1 = new Scanner(System.in);
         
         String line1 = "\n\n 0 Sair \n 1 Print \n 2 Ler de arquivo \n 3 Escrever em arquivo \n 4 Adicionar vértice";
-        String line2 = "\n 5 Adicionar aresta \n 6 Excluir vértice \n 7 BFS \n 8 Subjacente \n 9 Compactar \n 10 É conexo ? \n 11 Conta_componentes \n 12 DFS \n 13 Ordenação Topologica \n Escolha a opção: ";
-        String menu = line1 + line2;
+        String line2 = "\n 5 Adicionar aresta \n 6 Excluir vértice \n 7 BFS \n 8 Subjacente \n 9 Compactar"; 
+        String line3 = "\n 10 É conexo ? \n 11 Conta_componentes \n 12 DFS \n 13 Ordenação Topologica ";
+        String line4 = "\n 14 Reverter arcos \n 15 CFC \n 16 É bipartido? \n Escolha a opção: ";
+        String menu = line1 + line2 + line3 + line4;
         
-        Graph g1 = new Graph();
+        Digraph g1 = new Digraph();
         
         while( true ) {
             System.out.printf( menu );
@@ -34,8 +37,8 @@ public class AlgGrafos {
 
                     int quantidade = 0;
                     while ( quantidade <= 0) {
-                        String line4 = "\n\n Digite a quantidade de vertices a ser inserido: ";
-                        System.out.printf( line4 );
+                        String line_c4 = "\n\n Digite a quantidade de vertices a ser inserido: ";
+                        System.out.printf( line_c4 );
                         quantidade = scan1.nextInt();
                     }
                     
@@ -111,20 +114,37 @@ public class AlgGrafos {
                     System.out.printf("\n\nComponentes: %d", g1.count_components());
                     break;
                 case 12:
-                    g1.DFS();
+                    g1.DFS(null);
                     //g1.print_dfs();
                     break;
                 case 13:
-                    g1.topological_sorting( );
+                    List<Vertex> ts_vertex_set = g1.topological_sorting( );
+                    System.out.printf("\n\n Ordenação topológica \n");
+                    for ( Vertex v1 : ts_vertex_set )
+                        System.out.printf("\n id: " + v1.id + " f: " + v1.d_final );
+                    break;
+                case 14:
+                    Digraph d2 = g1.reverse( );
+                    d2.print( );		
+                    break;
+                case 15:
+                    g1.CFC( );
+                case 16:
+                    if ( g1.eh_bipartido( g1 ) ) {
+                        System.out.println("\n\nGrafo é bipartido.");
+                    } else {
+                        System.out.println("\n\nGrafo não é bipartido.");
+                    }
+                    
             }
         }
         
     }
     
-    private static void write( Graph g1 ) {
+    private static void write( Digraph g1 ) {
         try
         {
-            FileOutputStream arquivoGrav = new FileOutputStream("myfiles/saida.dat");
+            FileOutputStream arquivoGrav = new FileOutputStream("C:/Users/Yago/Desktop/UFRJ/ALG GRAF/Alg_Graf_PLE/myfiles/saida.dat");
             ObjectOutputStream objGravar = new ObjectOutputStream(arquivoGrav);
             objGravar.writeObject( g1 );
             objGravar.flush();
@@ -138,13 +158,13 @@ public class AlgGrafos {
         }
     }
 
-    private static Graph read( ) {
-        Graph g1 = null;
+    private static Digraph read( ) {
+        Digraph g1 = null;
         try
         {
-            FileInputStream arquivoLeitura = new FileInputStream("myfiles/saida.dat");
+            FileInputStream arquivoLeitura = new FileInputStream("C:/Users/Yago/Desktop/UFRJ/ALG GRAF/Alg_Graf_PLE/myfiles/saida.dat");
             ObjectInputStream objLeitura = new ObjectInputStream(arquivoLeitura);
-            g1 = (Graph) objLeitura.readObject();
+            g1 = (Digraph) objLeitura.readObject();
             objLeitura.close();
             arquivoLeitura.close();
             System.out.println("Objeto recuperado: ");

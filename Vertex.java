@@ -5,16 +5,18 @@ import java.lang.Comparable;
 public class Vertex  implements Serializable, Comparable<Vertex> {
     protected Integer id;
     protected HashMap<Integer,Vertex> nbhood;
-    protected Vertex parent;
-    protected Integer dist, d_inicial, d_final ;
+    // parent: refere-se a qual busca?
+    protected Vertex parent, root;
+    protected Integer dist, d_inicial, d_final, cor ;
 
     public Vertex ( int id ) {
         this.id = id;
         nbhood = new HashMap<Integer,Vertex>();
-        parent = null;
+        parent = root = null;
         dist = null;
         d_inicial = null;
         d_final = null;
+        cor = -1;
     }
 
     @Override public int compareTo( Vertex otherVertex ) {
@@ -39,8 +41,16 @@ public class Vertex  implements Serializable, Comparable<Vertex> {
         this.dist = parent.dist + 1;
     }
 
+    protected Vertex get_root( ) {
+		if( parent == null )
+			root = this;
+		else
+			root = parent.get_root( );
+		return root;
+	}
+
     public void print() {
-        System.out.print("\nId do vértice " + id + ", Vizinhança: " );
+        System.out.print("\nId do vértice " + id + ", Cor: " + this.cor +", Vizinhança: " );
         for( Vertex v : nbhood.values())
             System.out.print(" " + v.id );
         if( d_inicial != null )
