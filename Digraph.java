@@ -3,9 +3,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-
 import javax.swing.text.StyledEditorKit.BoldAction;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.io.Serializable;
@@ -33,9 +31,31 @@ public class Digraph implements Serializable {
     
     }
  
-    public void add_arc( final Integer id1, final Integer id2) {
+    /*public void add_arc( final Integer id1, final Integer id2) {
         final Vertex v1 = vertex_set.get(id1);
         final Vertex v2 = vertex_set.get(id2);
+        v1.add_neighbor( v2 );
+    }*/
+
+    public void add_arc( Integer id1, Integer id2) {
+		try {
+			Vertex v1 = vertex_set.get(id1);
+			Vertex v2 = vertex_set.get(id2);
+			v1.add_neighbor( v2 );
+		} catch(Exception e) {
+			this.add_vertex( id1 );
+			this.add_vertex( id2 );
+			Vertex v1 = vertex_set.get(id1);
+			Vertex v2 = vertex_set.get(id2);
+			v1.add_neighbor( v2 );
+		}
+    }
+
+    public void add_arc1( Integer id1, Integer id2) {
+		this.add_vertex( id1 );
+        Vertex v1 = vertex_set.get(id1);
+		this.add_vertex( id2 );
+        Vertex v2 = vertex_set.get(id2);
         v1.add_neighbor( v2 );
     }
 
