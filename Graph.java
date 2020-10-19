@@ -25,8 +25,7 @@ public class Graph extends Digraph {
 	}
 
 	// Verificar se precisa melhorar o bipartido do Digrafo com esse abaixo.
-
-	/*@Override public boolean is_bipartite( ) {
+	@Override public boolean is_bipartite( ) {
 		for( Vertex v1 : vertex_set.values( ) ) {
 			if( v1.ind_set == 0 ) {
 				v1.ind_set = 1;
@@ -36,9 +35,9 @@ public class Graph extends Digraph {
 		}
 		System.out.print( "\n É bipartido " );
 		return true;
-	}*/
+	}
 
-	/*private boolean bipartite_visit( Vertex v1 ) {
+	private boolean bipartite_visit( Vertex v1 ) {
 		for( Vertex v2 : v1.nbhood.values( ) ) {
 			if( v2.ind_set == 0 ) {
 				v2.ind_set = - v1.ind_set;
@@ -52,7 +51,7 @@ public class Graph extends Digraph {
 			}
 		}
 		return true;
-	}*/
+	}
 
 	public void bicon_comp( ) {
 		tempo = 0;

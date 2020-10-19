@@ -11,12 +11,12 @@ import java.io.Serializable;
 public class Digraph implements Serializable {
     protected HashMap<Integer,Vertex> vertex_set;
     protected Integer tempo;
-    private Boolean acyclic, bipartido;
+    private Boolean acyclic /*bipartido*/;
 
     public Digraph() {
         vertex_set = new HashMap<Integer,Vertex>();
         acyclic = null;
-        bipartido = null;
+        /*bipartido = null;*/
     }
     
     public boolean add_vertex( final int id) {
@@ -36,6 +36,13 @@ public class Digraph implements Serializable {
         final Vertex v2 = vertex_set.get(id2);
         v1.add_neighbor( v2 );
     }*/
+
+    public void add_arc_w( Integer id1, Integer id2, Integer weight ) { // arcos com pesos
+		add_arc( id1, id2 );
+		Vertex v1 = vertex_set.get(id1);
+		v1.add_weight( id2, weight );
+    }
+    
 
     public void add_arc( Integer id1, Integer id2) {
 		try {
@@ -242,24 +249,24 @@ public class Digraph implements Serializable {
                     viz.discover( atual );
                     lista.add( viz );
 
-                    if ( atual.cor == 0) {
+                    /*if ( atual.cor == 0) {
                             viz.cor = 1;
                     } else if ( atual.cor == 1) {
                             viz.cor = 0;
-                    }
+                    }*/
 
-                } else {
+                /*} else {
 
                     if (atual.cor == viz.cor) {
                         this.bipartido = false;
-                    }
+                    }*/
                 }  
                
             }
         }
     }
 
-    public Boolean eh_bipartido ( Digraph grafo_aux ) {
+   /* public Boolean eh_bipartido ( Digraph grafo_aux ) {
         grafo_aux.bipartido = null;  
         if ( grafo_aux.is_undirected() ) {
             // Garantir cor incial de todos os vertices com -1;
@@ -283,7 +290,7 @@ public class Digraph implements Serializable {
         }
 
         return this.bipartido;
-    }
+    }*/
 
     public void DFS( List<Vertex> ordering ) {
         
@@ -404,7 +411,94 @@ public class Digraph implements Serializable {
 		}
     }
     
+    public boolean is_bipartite( ) {
+		Graph g1 = this.subjacent( );
+		if( ! g1.is_bipartite( ) )
+			return false;
+		return true;
+	}
 
+    private void Initialize_Single_Source( Vertex s ) {
+		for( Vertex ve1 : vertex_set.values( ) ) {
+			// maximum value of int
+			ve1.dist = 2147483647;
+			ve1.parent = null;
+        }
+
+        s.dist = 0;
+        //this.vertex_set.get(s.id).dist = 0;
+		
+	}
+	
+	private void relax( Vertex ve1, Vertex ve2 ) {
+		if( ve1.dist == 2147483647 )
+			return;
+		if( ve2.dist > ve1.dist + ve1.arc_weights.get( ve2.id ) ) {
+			ve2.dist = ve1.dist + ve1.arc_weights.get( ve2.id );
+			ve2.parent = ve1;
+		}
+    }	
+	
+	public boolean Bellmann_Ford( int id ) {
+		Vertex s = vertex_set.get( id );
+		Initialize_Single_Source( s );
+
+		for( int i = 1; i < vertex_set.size( ); i++ )  // Se conexo O( n + m ) 
+			for( Vertex ve1 : vertex_set.values( ) ) 
+				for( Vertex ve2 : ve1.nbhood.values( ) ) 
+					relax( ve1, ve2 );
+
+		for( Vertex ve1 : vertex_set.values( ) )
+			for( Vertex ve2 : ve1.nbhood.values( ) ) {
+				if( ve1.dist != 2147483647 )
+					if( ve2.dist > ve1.dist + ve1.arc_weights.get( ve2.id ) )
+						return false;
+			}
+		return true;
+    }
+    
+    // Tarefa 08/10 - Como grafo será aciclico, tirar verificação de ciclos negativos e fazer ord. topologica
+    // Dag Shortest Path
+    public void DSP ( int id ) { // vertex s = fonte
+        List<Vertex> vertex_ord = this.topological_sorting();
+        Vertex s = vertex_set.get( id );
+        Initialize_Single_Source( s );
+        for ( Vertex v1 : vertex_ord) {
+            for ( Vertex v2 : v1.nbhood.values()) {
+                relax(v1, v2);
+            }
+        }
+    }
+
+    //Tarefa 08/10 - Implemantar o Dijkstra
+    public void Dijkstra ( int id ) {
+
+        Vertex s = vertex_set.get( id );
+        Initialize_Single_Source(s);
+        Queue<Vertex> q = new LinkedList<Vertex>();
+        q.addAll(vertex_set.values());
+
+        Vertex min = null;
+
+        while ( !q.isEmpty() ) {
+            
+            // Extract_min()
+            int aux = 2147483647;
+            for ( Vertex v1 : q ) {
+                if ( v1.dist <= aux ) {
+                    aux = v1.dist;
+                    min = v1;
+                }
+            }
+            Vertex u = vertex_set.get(min.id);
+
+            for (  Vertex v2 : u.nbhood.values()) {
+                relax(u, v2);
+            }
+
+            q.remove(min);
+        }
+    }
 
     public void print() {
 		System.out.print("\n\n -------------------------------");

@@ -5,13 +5,18 @@ import java.lang.Comparable;
 public class Vertex  implements Serializable, Comparable<Vertex> {
     protected Integer id;
     protected HashMap<Integer,Vertex> nbhood;
+    protected HashMap<Integer,Integer> arc_weights;
     // parent: refere-se a qual busca?
     protected Vertex parent, root;
     protected Integer dist, d_inicial, d_final, cor, low;
+    // independent set if bipartite: 0, -1, or 1
+    protected int ind_set;
 
     public Vertex ( int id ) {
         this.id = id;
         nbhood = new HashMap<Integer,Vertex>();
+        arc_weights = new HashMap<Integer,Integer>( );
+
         parent = root = null;
         dist = null;
         d_inicial = null;
@@ -28,6 +33,10 @@ public class Vertex  implements Serializable, Comparable<Vertex> {
     
     public void add_neighbor( Vertex viz ) {
         nbhood.put(viz.id, viz);
+    }
+
+    protected void add_weight( Integer id_nb, Integer weight ) {
+        arc_weights.put( id_nb, weight );
     }
 
     public int grau_saida () {
