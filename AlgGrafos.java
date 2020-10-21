@@ -8,6 +8,7 @@ import java.util.List;
 public class AlgGrafos {
 
     static Digraph dg1;
+    static int inf = 2147483647;
 
     public static void main(String args[ ]) {
         dg1 = new Digraph();
@@ -119,6 +120,23 @@ public class AlgGrafos {
                             dg1.add_arc_w(4,5,-1);
                             dg1.add_arc_w(4,6,1);
                             dg1.add_arc_w(5,6,-2);
+                            break;
+                        case 4:
+                            dg1.add_vertex( 1 );
+                            dg1.add_vertex( 2 );
+                            dg1.add_vertex( 3 );
+                            dg1.add_vertex( 4 );
+                            dg1.add_vertex( 5 );
+                            dg1.add_arc_w(1,2,3);
+                            dg1.add_arc_w(1,3,8);
+                            dg1.add_arc_w(1,5,-4);
+                            dg1.add_arc_w(2,4,1);
+                            dg1.add_arc_w(2,5,7);
+                            dg1.add_arc_w(3,2,4);
+                            dg1.add_arc_w(4,1,2);
+                            dg1.add_arc_w(4,3,-5);
+                            dg1.add_arc_w(5,4,6);
+                            dg1.FloydWarshall();
                             break;
                         case 0:
                             return;
