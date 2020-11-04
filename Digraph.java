@@ -12,13 +12,12 @@ import java.io.Serializable;
 public class Digraph implements Serializable {
     protected HashMap<Integer, Vertex> vertex_set;
     protected Integer tempo;
-    private Boolean acyclic /* bipartido */;
+    private Boolean acyclic;
     static int inf = 2147483647;
 
     public Digraph() {
         vertex_set = new HashMap<Integer, Vertex>();
         acyclic = null;
-        /* bipartido = null; */
     }
 
     public boolean add_vertex(final int id) {
@@ -239,7 +238,6 @@ public class Digraph implements Serializable {
 
         Vertex raiz = vertex_set.get(id_raiz);
         raiz.dist = 0;
-        raiz.cor = 0;
         Queue<Vertex> lista = new LinkedList<Vertex>();
         lista.add(raiz);
 
@@ -250,37 +248,11 @@ public class Digraph implements Serializable {
                 if (viz.dist == null) {
                     viz.discover(atual);
                     lista.add(viz);
-
-                    /*
-                     * if ( atual.cor == 0) { viz.cor = 1; } else if ( atual.cor == 1) { viz.cor =
-                     * 0; }
-                     */
-
-                    /*
-                     * } else {
-                     * 
-                     * if (atual.cor == viz.cor) { this.bipartido = false; }
-                     */
                 }
 
             }
         }
     }
-
-    /*
-     * public Boolean eh_bipartido ( Digraph grafo_aux ) { grafo_aux.bipartido =
-     * null; if ( grafo_aux.is_undirected() ) { // Garantir cor incial de todos os
-     * vertices com -1; for ( Vertex v : grafo_aux.vertex_set.values()){ v.cor = -1;
-     * v.dist = null; }
-     * 
-     * if ( grafo_aux.is_connected()) { // is_connected já chama BFS() que implenta
-     * a verificação da bipartição if ( grafo_aux.bipartido == null){ this.bipartido
-     * = true; } } else { // Print o grafo não é coxexo; this.bipartido = false; }
-     * 
-     * } else { // Print o grafo é dirigivel; this.bipartido = false; }
-     * 
-     * return this.bipartido; }
-     */
 
     public void DFS(List<Vertex> ordering) {
 
@@ -493,18 +465,20 @@ public class Digraph implements Serializable {
     }
 
     // Tarefa 20/10 - Caminhos minimos para todos os pares ( Supomos que não existe nenhum ciclo de peso negativo)
-    public void FloydWarshall() {
+    public void FloydWarshall() { // O(n^3)
+        
         // Exemplo do livro
         /*int W[][] = { { 0, 3, 8, 99, -4 }, { 99, 0, 99, 1, 7 }, { 99, 4, 0, 99, 99 }, { 2, 99, -5, 0, 99 },
-                { 99, 99, 99, 6, 0 } };*/    
+                { 99, 99, 99, 6, 0 } };*/
+
         int W [][]= getMatrizAdjcomPesos();
         int n = W.length;
-        int[][] dist = new int[n][n];// will represent the weight of the shortest path from vertex i to vertex j
+        int[][] dist = new int[n][n];// Will represent the weight of the shortest path from vertex i to vertex j
         int i, j, k;
 
         dist = W;
 
-        // Floyd-Warshall Algorithm O(n^3)
+        // Floyd-Warshall Algorithm 
         for (k = 0; k < n; k++)
             for (j = 0; j < n; j++)
                 for (i = 0; i < n; i++)

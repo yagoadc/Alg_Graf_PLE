@@ -8,9 +8,12 @@ public class Vertex  implements Serializable, Comparable<Vertex> {
     protected HashMap<Integer,Integer> arc_weights;
     // parent: refere-se a qual busca?
     protected Vertex parent, root;
-    protected Integer dist, d_inicial, d_final, cor, low;
+    protected Integer dist, d_inicial, d_final, low;
     // independent set if bipartite: 0, -1, or 1
     protected int ind_set;
+    protected boolean seen;
+    protected Vertex emparelhado;
+    protected Integer d; // Utilizado para representar a distancia do vertice em relação a raiz no algoritimo de Hopcroft-Karp 
 
     public Vertex ( int id ) {
         this.id = id;
@@ -19,9 +22,13 @@ public class Vertex  implements Serializable, Comparable<Vertex> {
 
         parent = root = null;
         dist = null;
-        d_inicial = null;
-        d_final = null;
-        cor = -1;
+        d_inicial = null; // representa tempo inicial d
+        d_final = null; // representa o tempo final f
+
+        seen = false;
+        emparelhado = null;
+        d = 99999999; // Valor inicializado representando o "infinito" no Hopcroft-Karp
+
     }
 
     @Override public int compareTo( Vertex otherVertex ) {
@@ -59,7 +66,7 @@ public class Vertex  implements Serializable, Comparable<Vertex> {
 	}
 
     public void print() {
-        System.out.print("\nId do vértice " + id + ", Cor: " + this.cor +", Vizinhança: " );
+        System.out.print("\nId do vértice " + id + ", Cor: " + this.ind_set +", Vizinhança: " );
         for( Vertex v : nbhood.values())
             System.out.print(" " + v.id );
         if( d_inicial != null )

@@ -8,7 +8,7 @@ public class FileGraph {
 		String pieces[ ];
 
 		try {
-		    FileReader file_in = new FileReader("C:/Users/Yago/Desktop/UFRJ/ALG GRAF/Alg_Graf_PLE/myfiles/");
+		    FileReader file_in = new FileReader("C:/Users/Yago/Desktop/UFRJ/ALG GRAF/Alg_Graf_PLE/myfiles/entrada.txt");
 		    BufferedReader br1 = new BufferedReader( file_in );
 		    while ( (thisLine = br1.readLine( )) != null) {
 			    // retira excessos de espaços em branco

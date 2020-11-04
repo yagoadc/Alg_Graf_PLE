@@ -121,7 +121,7 @@ public class AlgGrafos {
                             dg1.add_arc_w(4,6,1);
                             dg1.add_arc_w(5,6,-2);
                             break;
-                        case 4:
+                        case 4: // Exemplo FloydWarshall
                             dg1.add_vertex( 1 );
                             dg1.add_vertex( 2 );
                             dg1.add_vertex( 3 );
@@ -136,7 +136,6 @@ public class AlgGrafos {
                             dg1.add_arc_w(4,1,2);
                             dg1.add_arc_w(4,3,-5);
                             dg1.add_arc_w(5,4,6);
-                            dg1.FloydWarshall();
                             break;
                         case 0:
                             return;
@@ -157,7 +156,6 @@ public class AlgGrafos {
                 
                 }
             }   
-        
     }
 
     private static void algorithms( ) {
@@ -166,7 +164,7 @@ public class AlgGrafos {
         String line1 = "\n\n 0 Sair \n 1 Print \n 7 BFS \n 8 Subjacente \n 9 Compactar";
         String line2 =  "\n 10 É conexo ? \n 11 Conta_componentes \n 12 DFS \n 13 Ordenação Topologica ";
         String line3 =  "\n 14 Reverter arcos \n 15 CFC \n 16 É bipartido?\n 17 Comp. biconexas \n 18 Bellman Ford ";
-        String line4 = " \n 19 DSP \n 20 Dijkstra \n Escolha a opção: ";
+        String line4 = " \n 19 DSP \n 20 Dijkstra \n 21 FloydWarshall \n 22 Emp. Máx.( Alg. Simples) \n 23 Hopcroft-Karp \n Escolha a opção: ";
         String menu = line1 + line2 + line3 + line4;
 
         boolean goon = true;
@@ -214,7 +212,6 @@ public class AlgGrafos {
 
                 case 12:
                     dg1.DFS(null);
-                    //g1.print_dfs();
                     break;
 
                 case 13:
@@ -234,11 +231,6 @@ public class AlgGrafos {
                    break;
 
                 case 16:
-                    /*if ( dg1.eh_bipartido( dg1 ) ) {
-                        System.out.println("\n\nGrafo é bipartido.");
-                    } else {
-                        System.out.println("\n\nGrafo não é bipartido.");
-                    }*/
                     dg1.is_bipartite( );
                     break;
 
@@ -255,6 +247,24 @@ public class AlgGrafos {
                    break;
                 case 20:
                     dg1.Dijkstra(1);
+                    break;
+                case 21:
+                    dg1.FloydWarshall();
+                    break;
+                case 22:
+                    g2 = dg1.subjacent();
+                    if ( g2.is_bipartite()){
+                        g2.emp_max();
+                        //g2.print();
+                    }
+                    break;
+                case 23:
+                    g2 = dg1.subjacent();
+                    if ( g2.is_bipartite()){
+                        g2.hopcroft_karp();
+                        //g2.print();
+                    }
+                    
               }
          }
 	} 
